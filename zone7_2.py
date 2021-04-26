@@ -25,13 +25,13 @@ match_days[DAYS_BEFORE], match_days[DAYS_AFTER] = 0, 0
 data = pd.concat([match_days, training_sessions], ignore_index = True, sort=True)
 
 data = data.sort_values(["id", "Date"])
-match_id = match_days.sort_vaslues(["id", "Date"]).groupby("id")
+match_id = match_days.sort_values(["id", "Date"]).groupby("id")
 training_id = training_sessions.sort_values(["id", "Date"]).groupby("id")
 id_groups = data.groupby("id")
 for player in match_id.groups:
     p_matches = match_id.get_group(player)
     p_training = training_id.get_group(player)
-    player_dates = p_matches['Date'] - p_training['Date']
+    player_dates = pd.to_datetime(pd.to_datetime(p_training['Date']).values[0] - pd.to_datetime(p_matches['Date']).values).day
 
     # player[DAYS_BEFORE] = argmin(match_id_groups[date] - training_id_groups[date]) s.t. > 0
     # player[DAYS_AFTER] = abs (argmin(match_id_groups[date] - training_id_groups[date]) s.t. < 0)
