@@ -14,6 +14,7 @@ NOT_GAME_DAY = 0
 def compute_days_before(training_dates, p_matches_dates):
     if type(p_matches_dates) is list:
         return [-1] * len(p_training)
+    n_training = len(training_dates)
     matches_dates = pd.to_datetime(p_matches_dates[DATE])
     trn_before_last_game = 0
     days_before = []
@@ -22,7 +23,9 @@ def compute_days_before(training_dates, p_matches_dates):
         subtraction = (pd.to_datetime(match) - pd.to_datetime(training_dates)).days
         days_before += [val for val in subtraction if val > 0]
         trn_before_last_game = pd.DataFrame(subtraction).lt(0).idxmax()[0]
-    days_before += [-1] * (len(training_dates) - len(days_before))
+    print(days_before)
+    days_before = days_before + ([-1] * (n_training - len(days_before)))
+    print(days_before)
     return days_before
 
 
@@ -32,7 +35,7 @@ def compute_days_after(training_dates, p_matches_dates):
     m_dates = pd.to_datetime(p_matches_dates[DATE])
     subtraction = (pd.to_datetime(training_dates) - pd.to_datetime(m_dates.values[0])).days
     trn_before_next_game = pd.DataFrame(subtraction).gt(0).idxmax()[0]
-    days_after = [-1] * (trn_before_next_game)
+    days_after = [-1] * trn_before_next_game
     for i in range(len(m_dates.values) - 1):
         training_dates = training_dates[trn_before_next_game:]
         subtraction = (pd.to_datetime(training_dates) - pd.to_datetime(m_dates.values[i])).days
